@@ -8,10 +8,11 @@ import com.cst438.service.GradebookService;
 import com.cst438.service.GradebookServiceMQ;
 import com.cst438.service.GradebookServiceREST;
 
+// just testing
 @SpringBootApplication
 public class Cst4380wRegistrationApplication  {  
 
-	// minor
+	
 	public static void main(String[] args) {
 		SpringApplication.run(Cst4380wRegistrationApplication.class, args);
 	}
