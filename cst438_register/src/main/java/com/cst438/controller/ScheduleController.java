@@ -153,4 +153,74 @@ public class ScheduleController {
 		return courseDTO;
 	}
 	
+	private ScheduleDTO createSTDTO(Student e) {
+		ScheduleDTO StDTO = new ScheduleDTO();
+		
+		
+		StDTO.student_id = e.getStudent_id();
+		StDTO.student_email = e.getEmail();
+		return StDTO;
+	}
+	
+	
+	// new code
+	
+	@PostMapping("/addStudent")
+	@Transactional
+	public ScheduleDTO addStudent( @RequestBody Student student  ) { 
+
+		student.setStatusCode(0);
+		
+		if (student!= null && studentRepository.findByEmail(student.getEmail()) == null) {
+			
+			Student Savedstudent = studentRepository.save(student);
+			
+			//gradebookService.enrollStudent(student_email, student.getName(), course.getCourse_id());
+			
+			ScheduleDTO result = createSTDTO(Savedstudent);
+			return result;
+			
+		} else {
+			throw  new ResponseStatusException( HttpStatus.BAD_REQUEST, "Student with same email is already present in the system.  "+student.getEmail());
+		}
+		
+	}
+	
+	
+	
+	@PostMapping("/RegistrationHold")
+	@Transactional
+	public ScheduleDTO RegistrationHold( @RequestBody Student student  ) { 
+
+		if (studentRepository.findByEmail(student.getEmail()) != null) {
+			
+			Student Updatedstudent = studentRepository.findByEmail(student.getEmail());
+		
+			if (Updatedstudent.getStatusCode() == 0)
+				Updatedstudent.setStatusCode(1);
+			else
+				Updatedstudent.setStatusCode(0);
+				
+			studentRepository.save(Updatedstudent);
+			//gradebookService.enrollStudent(student_email, student.getName(), course.getCourse_id());
+			
+			ScheduleDTO result = createSTDTO(Updatedstudent);
+			return result;
+			
+		} else {
+			throw  new ResponseStatusException( HttpStatus.BAD_REQUEST, "Student with the given email does not exist in the system.  "+student.getEmail());
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
