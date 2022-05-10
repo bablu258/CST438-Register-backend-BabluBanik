@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.mockito.BDDMockito.given;
@@ -30,6 +33,7 @@ import com.cst438.domain.Enrollment;
 import com.cst438.domain.EnrollmentRepository;
 import com.cst438.domain.ScheduleDTO;
 import com.cst438.domain.Student;
+import com.cst438.domain.StudentDTO;
 import com.cst438.domain.StudentRepository;
 import com.cst438.service.GradebookService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -162,6 +166,111 @@ public class JunitTestSchedule {
 		// verify that repository find method was called.
 		verify(enrollmentRepository, times(1)).findStudentSchedule(TEST_STUDENT_EMAIL, TEST_YEAR, TEST_SEMESTER);
 	}
+	
+	
+	
+	@Test
+	public void addStudent()  throws Exception {
+		
+		MockHttpServletResponse response;
+
+		String [] names = {"Topon Das", "Robert Khan", "Jamil Tpia", "Biplob Banik"};
+		int random_int = (int)Math.floor(Math.random()*(9999-1256+1)+1256);
+		
+		String stName = names[ThreadLocalRandom.current().nextInt(names.length)];
+		String testEmail =  stName.replaceAll("\\s+","")+random_int+"@csumb.edu";
+		
+		Student student = new Student();
+		student.setEmail(testEmail);
+		student.setName(stName);
+		student.setStatusCode(0);
+		
+		// given  -- stubs for database repositories that return test data
+	    given(studentRepository.findByEmail(testEmail)).willReturn(student);
+		
+		StudentDTO.StuDTO studentDTO= new StudentDTO.StuDTO();
+		studentDTO.email = testEmail;
+		studentDTO.name = stName;
+	
+		
+		// then do an http post request with body of courseDTO as JSON
+		response = mvc.perform(
+				MockMvcRequestBuilders
+			      .post("/addStudent")
+			      .content(asJsonString(studentDTO))
+			      .contentType(MediaType.APPLICATION_JSON)
+			      .accept(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse();
+		
+
+		// verify that return status = 400 as error
+		assertEquals(400, response.getStatus());
+		
+		// verify the error message
+		assertEquals("Student with same email is already present in the system.  "+testEmail, response.getErrorMessage() );
+		
+		// verify that repository find method was called.
+		verify(studentRepository, times(1)).findByEmail(testEmail);
+		
+		
+
+	}
+	
+	
+	@Test
+	public void UpdateStatusCode()  throws Exception {
+		
+		MockHttpServletResponse response;
+
+		String [] names = {"Topon Das", "Robert Khan", "Jamil Tpia", "Biplob Banik"};
+		int random_int = (int)Math.floor(Math.random()*(9999-1256+1)+1256);
+		
+		int [] num = {0,1};
+		
+		String stName = names[ThreadLocalRandom.current().nextInt(names.length)];
+		String testEmail =  stName.replaceAll("\\s+","")+random_int+"@csumb.edu";
+		
+		Student student = new Student();
+		student.setEmail(testEmail);
+		student.setName(stName);
+		int givenStatusCode = num[ThreadLocalRandom.current().nextInt(num.length)];
+		student.setStatusCode(givenStatusCode);
+		
+		// given  -- stubs for database repositories that return test data
+	    given(studentRepository.findByEmail(testEmail)).willReturn(student);
+	   
+		
+		StudentDTO.StuDTO studentDTO= new StudentDTO.StuDTO();
+		studentDTO.email = testEmail;
+		studentDTO.name = stName;
+	
+		
+		
+		response = mvc.perform(
+				MockMvcRequestBuilders
+			      .post("/RegistrationHold")
+			      .content(asJsonString(studentDTO))
+			      .contentType(MediaType.APPLICATION_JSON)
+			      .accept(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse();
+		
+
+		// verify that return status =200 as success
+		assertEquals(200, response.getStatus());
+		
+		 //verify status code have changed
+		
+		assertNotEquals( givenStatusCode  , student.getStatusCode());
+		
+		// verify that repository find method was called.
+		verify(studentRepository, times(2)).findByEmail(testEmail);
+		
+		
+
+	}
+	
+	
+	
 	
 	@Test
 	public void dropCourse()  throws Exception {
