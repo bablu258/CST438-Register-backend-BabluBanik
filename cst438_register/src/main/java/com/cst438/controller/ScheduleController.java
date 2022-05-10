@@ -22,6 +22,7 @@ import com.cst438.domain.Enrollment;
 import com.cst438.domain.EnrollmentRepository;
 import com.cst438.domain.ScheduleDTO;
 import com.cst438.domain.Student;
+import com.cst438.domain.StudentDTO;
 import com.cst438.domain.StudentRepository;
 import com.cst438.service.GradebookService;
 
@@ -153,12 +154,16 @@ public class ScheduleController {
 		return courseDTO;
 	}
 	
-	private ScheduleDTO createSTDTO(Student e) {
-		ScheduleDTO StDTO = new ScheduleDTO();
+	private StudentDTO.StuDTO createSTDTO(Student e) {
+		StudentDTO.StuDTO StDTO = new StudentDTO.StuDTO();
 		
 		
-		StDTO.student_id = e.getStudent_id();
-		StDTO.student_email = e.getEmail();
+		//StDTO.student_id = e.getStudent_id();
+		StDTO.email = e.getEmail();
+		StDTO.name = e.getName();
+		StDTO.statueCode = e.getStatusCode();
+		
+		
 		return StDTO;
 	}
 	
@@ -167,7 +172,7 @@ public class ScheduleController {
 	
 	@PostMapping("/addStudent")
 	@Transactional
-	public ScheduleDTO addStudent( @RequestBody Student student  ) { 
+	public StudentDTO.StuDTO addStudent( @RequestBody Student student  ) { 
 
 		student.setStatusCode(0);
 		
@@ -177,7 +182,11 @@ public class ScheduleController {
 			
 			//gradebookService.enrollStudent(student_email, student.getName(), course.getCourse_id());
 			
-			ScheduleDTO result = createSTDTO(Savedstudent);
+			//ScheduleDTO result = createSTDTO(Savedstudent);
+			
+			StudentDTO.StuDTO result = createSTDTO(Savedstudent);
+			
+			
 			return result;
 			
 		} else {
@@ -190,7 +199,7 @@ public class ScheduleController {
 	
 	@PostMapping("/RegistrationHold")
 	@Transactional
-	public ScheduleDTO RegistrationHold( @RequestBody Student student  ) { 
+	public StudentDTO.StuDTO RegistrationHold( @RequestBody Student student  ) { 
 
 		if (studentRepository.findByEmail(student.getEmail()) != null) {
 			
@@ -204,7 +213,7 @@ public class ScheduleController {
 			studentRepository.save(Updatedstudent);
 			//gradebookService.enrollStudent(student_email, student.getName(), course.getCourse_id());
 			
-			ScheduleDTO result = createSTDTO(Updatedstudent);
+			StudentDTO.StuDTO result = createSTDTO(Updatedstudent);
 			return result;
 			
 		} else {
