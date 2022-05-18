@@ -24,6 +24,8 @@ public class Student {
 	private int statusCode;
 	private String status;
 	
+	
+	
 	public Student() {
 		super();
 	}
@@ -32,6 +34,7 @@ public class Student {
 		return student_id;
 	}
 	public void setStudent_id(int student_id) {
+		
 		this.student_id = student_id;
 	}
 	public String getName() {
@@ -61,7 +64,7 @@ public class Student {
 	@Override
 	public String toString() {
 		return "Student [student_id=" + student_id + ", name=" + name + ", email=" + email + ", statusCode="
-				+ statusCode + ", status=" + status + "]";
+				+ statusCode + ",     status=" + status + "]";
 	}
 
 }
