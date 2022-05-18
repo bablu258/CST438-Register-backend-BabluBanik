@@ -62,6 +62,31 @@ public class ScheduleController {
 		}
 	}
 	
+	
+	
+	@GetMapping("/getStudent")
+	public Student[] getStudent( ) {
+		
+
+			List<Student> students = (List<Student>) studentRepository.findAll();
+			
+			Student[] arraySte = new Student[students.size()];
+			
+			for (int i =0; i <students.size(); i++ )
+			{
+				
+				arraySte[i]=students.get(i);
+				
+				
+			}
+				
+			
+			
+			//return students;
+			
+			return arraySte;
+	
+	}
 
 	
 	@PostMapping("/schedule")
