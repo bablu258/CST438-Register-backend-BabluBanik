@@ -11,11 +11,13 @@ import com.cst438.domain.CourseDTOG;
 import com.cst438.domain.Enrollment;
 import com.cst438.domain.EnrollmentRepository;
 
+
 @RestController
 public class CourseController {
 	
 	@Autowired
 	EnrollmentRepository enrollmentRepository;
+
 	
 	/*
 	 * endpoint used by gradebook service to transfer final course grades
@@ -25,6 +27,39 @@ public class CourseController {
 	public void updateCourseGrades( @RequestBody CourseDTOG courseDTO, @PathVariable("course_id") int course_id) {
 		
 		//TODO  complete this method in homework 4
+		
+		int size = courseDTO.grades.size();
+		
+		for (int i = 0; i< size; i++)
+		{
+			String grade= courseDTO.grades.get(i).grade;
+			String email = courseDTO.grades.get(i).student_email;
+			
+			System.out.println(grade);
+			System.out.println(email);
+			
+			//Enrollment en = new Enrollment ();
+			//courseDTO.course_id = course_id;
+			
+			// check for email 
+			
+			if (enrollmentRepository.findByEmailAndCourseId( email  , course_id) != null)
+			{
+				enrollmentRepository.findByEmailAndCourseId( email  , course_id).setCourseGrade(grade);
+				
+				System.out.println(enrollmentRepository.findByEmailAndCourseId( email  , course_id).getCourseGrade());
+			}
+
+			
+			
+		}
+		
+
+		
+
+		
+		
+		//courseDTO.grades.get(0).
 		
 	}
 
