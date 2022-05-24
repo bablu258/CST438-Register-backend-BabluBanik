@@ -47,6 +47,8 @@ public class CourseController {
 			{
 				enrollmentRepository.findByEmailAndCourseId( email  , course_id).setCourseGrade(grade);
 				
+				enrollmentRepository.save(enrollmentRepository.findByEmailAndCourseId( email  , course_id));
+				
 				System.out.println(enrollmentRepository.findByEmailAndCourseId( email  , course_id).getCourseGrade());
 			}
 
