@@ -63,6 +63,7 @@ public class GradebookServiceMQ extends GradebookService {
 			if (enrollmentRepository.findByEmailAndCourseId( email  , course_id) != null)
 			{
 				enrollmentRepository.findByEmailAndCourseId( email  , course_id).setCourseGrade(grade);
+				enrollmentRepository.save(enrollmentRepository.findByEmailAndCourseId( email  , course_id));
 				
 				System.out.println(enrollmentRepository.findByEmailAndCourseId( email  , course_id).getCourseGrade());
 			}
