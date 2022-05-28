@@ -2,9 +2,13 @@ package com.cst438;
 
 import static org.mockito.ArgumentMatchers.any;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+//import static org.junit.Assert.assertEquals;
+//import static org.junit.Assert.assertNotEquals;
+//import static org.junit.Assert.assertTrue;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
 import java.util.List;
@@ -161,7 +165,9 @@ public class JunitTestSchedule {
 				found = true;
 			}
 		}
-		assertTrue("Added course not in updated schedule.", found);
+		//assertTrue("Added course not in updated schedule.", found);
+		
+		assertEquals(true, found);
 		
 		// verify that repository find method was called.
 		verify(enrollmentRepository, times(1)).findStudentSchedule(TEST_STUDENT_EMAIL, TEST_YEAR, TEST_SEMESTER);
