@@ -64,7 +64,7 @@ public class ScheduleController {
 	
 	
 	
-	@GetMapping("getStudent")
+	@GetMapping("/getStudent")
 	public Student[] getStudent( ) {
 		
 
