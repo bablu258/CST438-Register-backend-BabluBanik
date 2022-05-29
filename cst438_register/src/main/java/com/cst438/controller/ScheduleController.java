@@ -27,7 +27,7 @@ import com.cst438.domain.StudentRepository;
 import com.cst438.service.GradebookService;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:3000", "https://frontend258.herokuapp.com/"})
+@CrossOrigin(origins = {"http://localhost:3000/", "https://frontend258.herokuapp.com/"})
 public class ScheduleController {
 	
 	
@@ -47,7 +47,7 @@ public class ScheduleController {
 	/*
 	 * get current schedule for student.
 	 */
-	@GetMapping("/schedule")
+	@GetMapping("schedule")
 	public ScheduleDTO getSchedule( @RequestParam("year") int year, @RequestParam("semester") String semester ) {
 		
 		String student_email = "test@csumb.edu";   // student's email 
@@ -64,7 +64,7 @@ public class ScheduleController {
 	
 	
 	
-	@GetMapping("/getStudent")
+	@GetMapping("getStudent")
 	public Student[] getStudent( ) {
 		
 
@@ -89,7 +89,7 @@ public class ScheduleController {
 	}
 
 	
-	@PostMapping("/schedule")
+	@PostMapping("schedule")
 	@Transactional
 	public ScheduleDTO.CourseDTO addCourse( @RequestBody ScheduleDTO.CourseDTO courseDTO  ) { 
 		
@@ -121,7 +121,7 @@ public class ScheduleController {
 		
 	}
 	
-	@DeleteMapping("/schedule/{enrollment_id}")
+	@DeleteMapping("schedule/{enrollment_id}")
 	@Transactional
 	public void dropCourse(  @PathVariable int enrollment_id  ) {
 		
@@ -195,7 +195,7 @@ public class ScheduleController {
 	
 	// new code
 	
-	@PostMapping("/addStudent")
+	@PostMapping("addStudent")
 	@Transactional
 	public StudentDTO.StuDTO addStudent( @RequestBody Student student  ) { 
 
@@ -222,7 +222,7 @@ public class ScheduleController {
 	
 	
 	
-	@PostMapping("/RegistrationHold")
+	@PostMapping("RegistrationHold")
 	@Transactional
 	public StudentDTO.StuDTO RegistrationHold( @RequestBody Student student  ) { 
 
