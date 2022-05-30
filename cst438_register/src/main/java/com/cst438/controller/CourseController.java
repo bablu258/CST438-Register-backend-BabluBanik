@@ -22,7 +22,7 @@ public class CourseController {
 	/*
 	 * endpoint used by gradebook service to transfer final course grades
 	 */
-	@PutMapping("course/{course_id}")
+	@PutMapping("/course/{course_id}")
 	@Transactional
 	public void updateCourseGrades( @RequestBody CourseDTOG courseDTO, @PathVariable("course_id") int course_id) {
 		
