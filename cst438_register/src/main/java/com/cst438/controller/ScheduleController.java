@@ -2,9 +2,14 @@ package com.cst438.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,8 +18,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.view.RedirectView;
 
 import com.cst438.domain.Course;
 import com.cst438.domain.CourseRepository;
@@ -43,14 +50,76 @@ public class ScheduleController {
 	@Autowired
 	GradebookService gradebookService;
 	
+	@Value("${frontend.post.login.url}")
+	String redirect_url;
+	
+	
+	
+	
+	
+	
+	@GetMapping("/")
+
+	
+	public boolean VerifyAdminUser( @AuthenticationPrincipal OAuth2User principal) {
+		
+		
+		Map attributes = principal.getAttributes();
+		String Teacher_email = (String) attributes.get("email");
+		
+		System.out.println("\n\n\n\n\n"+ "credentials here  em "+ Teacher_email+("\n\n\n\n\n"));
+		System.out.println("\n\n\n\n\n"+ "num of repo "+ courseRepository.count()+("\n\n\n\n\n"));
+		
+		boolean exist = false;
+
+		for (Course course : courseRepository.findAll())
+		{
+			
+				System.out.println("\n\n\n\n\n"+ "from DB "+ course.getInstructor().trim()+("\n\n\n\n\n"));
+				System.out.println("\n\n\n\n\n"+ "credentials here  em "+ Teacher_email+("\n\n\n\n\n"));
+				
+				if (course.getInstructor().trim().equalsIgnoreCase(Teacher_email.trim()))
+				{
+					exist = true;
+				
+					return true;
+					
+				}
+					
+			
+		}
+		
+		return false;
+		
+
+	}
+	
+	
+	
+
+
+
+	
+	
 	
 	/*
 	 * get current schedule for student.
 	 */
 	@GetMapping("/schedule")
-	public ScheduleDTO getSchedule( @RequestParam("year") int year, @RequestParam("semester") String semester ) {
+	
+	public ScheduleDTO getSchedule( @RequestParam("year") int year, @RequestParam("semester") String semester , @AuthenticationPrincipal OAuth2User principal) {
 		
-		String student_email = "test@csumb.edu";   // student's email 
+		//String student_email = principal.getAttribute("email");//"test@csumb.edu";   // student's email 
+		
+		
+		Map attributes = principal.getAttributes();
+		String student_email = (String) attributes.get("email");
+		
+		
+		if (studentRepository.findByEmail(student_email) == null) {
+	         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not Authorized to view!");
+	      }
+		
 		
 		Student student = studentRepository.findByEmail(student_email);
 		if (student != null) {
@@ -91,12 +160,31 @@ public class ScheduleController {
 	
 	@PostMapping("/schedule")
 	@Transactional
-	public ScheduleDTO.CourseDTO addCourse( @RequestBody ScheduleDTO.CourseDTO courseDTO  ) { 
+	public ScheduleDTO.CourseDTO addCourse( @RequestBody ScheduleDTO.CourseDTO courseDTO, @AuthenticationPrincipal OAuth2User principal   ) { 
 		
-		String student_email = "test@csumb.edu";   // student's email 
+		//String student_email = "test@csumb.edu";   // student's email 
+		
+		
+		
+		Map attributes = principal.getAttributes();
+		String student_email = (String) attributes.get("email");
+		
+		
+		if (studentRepository.findByEmail(student_email) == null) {
+	         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not Authorized to view!");
+	      }
+		
+		
+		
 		
 		Student student = studentRepository.findByEmail(student_email);
 		Course course  = courseRepository.findByCourse_id(courseDTO.course_id);
+		
+		
+		
+		
+		
+		
 		
 		// student.status
 		// = 0  ok to register
@@ -123,9 +211,18 @@ public class ScheduleController {
 	
 	@DeleteMapping("/schedule/{enrollment_id}")
 	@Transactional
-	public void dropCourse(  @PathVariable int enrollment_id  ) {
+	public void dropCourse(  @PathVariable int enrollment_id ,@AuthenticationPrincipal OAuth2User principal ) {
 		
-		String student_email = "test@csumb.edu";   // student's email 
+		//String student_email = "test@csumb.edu";   // student's email 
+		
+		Map attributes = principal.getAttributes();
+		String student_email = (String) attributes.get("email");
+		
+		
+		if (studentRepository.findByEmail(student_email) == null) {
+	         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not Authorized to view!");
+	      }
+		
 		
 		// TODO  check that today's date is not past deadline to drop course.
 		
